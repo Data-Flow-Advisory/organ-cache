@@ -126,12 +126,45 @@ result = decide(
 - `store_non_none_result.json` — a write of a present value → `store` (TTL clamped to `max_ttl`)
 - `backend_unconfigured_bypass.json` — no backend configured → `bypass`
 
+## Ports (the connection standard)
+
+Beyond conforming to the contract *shape*, this organ declares a typed **ports
+manifest** (`ports.json`) so the composer can wire it by type — the Lego stud from
+[`CONNECTORS.md`](https://github.com/Data-Flow-Advisory/orchestrator/blob/feat/drift-gate/CONNECTORS.md).
+Each port names a key `decide()` reads under `state` (inputs) or writes under
+`output` (outputs), pinned to a `type` from the shared vocabulary
+([`types.json`](https://github.com/Data-Flow-Advisory/orchestrator/blob/feat/drift-gate/types.json)).
+
+| Port | Direction | Type | Notes |
+|------|-----------|------|-------|
+| `operation` | in | `Str` | `get`/`set`/`lookup`/`store` — drives read vs write (required) |
+| `key_prefix` | in | `Str` | namespace for the derived key |
+| `key_parts` | in | `Json` | opaque payload hashed into the key |
+| `key` | in | `Str` | optional explicit key (overrides derivation) |
+| `ttl` | in | `Int` | requested TTL in seconds |
+| `value_present` | in | `Bool` | set/store: is the result non-None? |
+| `cached_value` | in | `Json` | get/lookup: what the store returned |
+| `caching_enabled` | out | `Bool` | |
+| `cache_key` | out | `Str` | |
+| `ttl` | out | `Int` | resolved + clamped |
+| `action` | out | `Str` | `hit`/`miss`/`store`/`skip_store`/`bypass` |
+| `is_hit` | out | `Bool` | |
+| `should_store` | out | `Bool` | |
+
+organ-cache is a low-level **infrastructure** organ: its ports carry scalar values,
+not discovery-spine domain artefacts (Blueprint, KeyFacts, …). The seeded vocabulary
+has no scalar types, so this PR proposes four reusable primitives — `Str`, `Int`,
+`Bool`, `Json` — flagged `_proposed: true` in the vendored `types.json` for upstream
+review (CONNECTORS.md rollout step 2). `types.json` here is a vendored snapshot of
+the orchestrator vocabulary so conformance runs offline.
+
 ## Tests & conformance
 
 ```bash
 python -m pip install pytest
 python3 check_contract.py   # contract shape on every sample + empty state
+python3 check_ports.py      # ports.json parses, types resolve, decide reads/writes declared names
 python -m pytest -q         # full unit suite
 ```
 
-The `conformance` GitHub Action runs both on every push.
+The `conformance` GitHub Action runs all three on every push.
