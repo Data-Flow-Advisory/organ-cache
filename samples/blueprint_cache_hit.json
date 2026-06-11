@@ -1,0 +1,21 @@
+{
+  "state": {
+    "operation": "get",
+    "key_prefix": "blueprint",
+    "key_parts": {
+      "tenant_id": 5,
+      "signature": "a1b2c3d4"
+    },
+    "cached_value": {
+      "modules": ["intake", "synthesis"],
+      "generated_at": "2026-06-10T09:00:00Z"
+    }
+  },
+  "context": {
+    "configured": true,
+    "redis_url": "redis://cache.internal:6379",
+    "default_ttl": 300,
+    "min_ttl": 1,
+    "max_ttl": 86400
+  }
+}

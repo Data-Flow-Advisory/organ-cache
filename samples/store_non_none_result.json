@@ -1,0 +1,19 @@
+{
+  "state": {
+    "operation": "set",
+    "key_prefix": "solutions",
+    "key_parts": {
+      "tenant_id": 12,
+      "interview_id": 884
+    },
+    "value_present": true,
+    "ttl": 600
+  },
+  "context": {
+    "configured": true,
+    "redis_url": "redis://cache.internal:6379",
+    "default_ttl": 300,
+    "min_ttl": 60,
+    "max_ttl": 3600
+  }
+}

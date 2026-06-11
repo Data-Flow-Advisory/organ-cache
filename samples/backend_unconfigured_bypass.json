@@ -1,0 +1,14 @@
+{
+  "state": {
+    "operation": "get",
+    "key_prefix": "blueprint",
+    "key_parts": {
+      "tenant_id": 5,
+      "signature": "a1b2c3d4"
+    },
+    "cached_value": null
+  },
+  "context": {
+    "configured": false
+  }
+}
