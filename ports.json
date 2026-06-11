@@ -1,6 +1,10 @@
 {
   "_README": "Typed ports manifest for organ-cache (the Lego stud — see CONNECTORS.md). `inputs` names the keys decide() reads under `state`; `outputs` names the keys it writes under `output`. Each `type` is a name from the shared vocabulary in types.json. organ-cache is a low-level infrastructure organ: its ports are scalar primitives, so it maps onto the proposed primitive types (Str/Int/Bool/Json), not the discovery-spine domain types.",
   "organ": "organ-cache",
+  "_checked": {
+    "corpus_checked": "2026-06-11",
+    "oss_checked": "2026-06-11"
+  },
   "inputs": [
     {"name": "operation", "type": "Str", "required": true},
     {"name": "key_prefix", "type": "Str", "required": false},
