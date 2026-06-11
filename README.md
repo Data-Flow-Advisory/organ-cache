@@ -125,13 +125,33 @@ result = decide(
 - `blueprint_cache_hit.json` — a configured backend, read with a cached value → `hit`
 - `store_non_none_result.json` — a write of a present value → `store` (TTL clamped to `max_ttl`)
 - `backend_unconfigured_bypass.json` — no backend configured → `bypass`
+- `explicit_key_store.json` — a write with an explicit `key` override → `store`
+
+## Connection ports (the Lego stud)
+
+`ports.json` declares this organ's typed inputs/outputs against the shared
+connection-type vocabulary, per
+[`CONNECTORS.md`](https://github.com/Data-Flow-Advisory/orchestrator/blob/feat/drift-gate/CONNECTORS.md).
+Each `name` is the literal key `decide()` reads under `state` (inputs) or writes
+under `output` (outputs); each `type` is a vocabulary entry — the stud size that
+decides which ports may wire together. (`context` keys are cache-substrate
+configuration, not wired ports, so they are not listed.)
+
+- `vocab/types.json` — a pinned snapshot of the orchestrator vocabulary (curated
+  domain types; the `types` block is kept byte-faithful to upstream).
+- `vocab/proposed_types.json` — the types this organ needs that the vocabulary
+  doesn't yet carry, **proposed for upstream review**: four foundational scalar
+  studs `String` / `Integer` / `Boolean` / `Json`, plus the cache-semantic
+  `CacheAction` enum. organ-cache is infrastructure — its ports are scalars, not
+  domain payloads, so no existing curated type fits.
 
 ## Tests & conformance
 
 ```bash
 python -m pip install pytest
 python3 check_contract.py   # contract shape on every sample + empty state
-python -m pytest -q         # full unit suite
+python3 check_ports.py      # ports.json parses, types ∈ vocabulary, names read/written
+python -m pytest -q         # full unit suite (incl. test_ports.py)
 ```
 
-The `conformance` GitHub Action runs both on every push.
+The `conformance` GitHub Action runs all three on every push.

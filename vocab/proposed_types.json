@@ -1,0 +1,32 @@
+{
+  "_README": "Types this PR PROPOSES adding to the shared vocabulary (Data-Flow-Advisory/orchestrator types.json). They are kept separate from the pinned snapshot in vocab/types.json so the curated domain vocabulary stays pristine until these are reviewed and promoted upstream. The conformance check validates organ-cache's ports against vocab/types.json `types` UNION these. See the PR body for the rationale.",
+  "version": 1,
+  "proposed_for": "Data-Flow-Advisory/orchestrator types.json",
+  "types": {
+    "String": {
+      "desc": "A primitive UTF-8 string scalar. Foundational: infrastructure/IO organs have scalar ports with no domain payload, and the curated vocabulary currently has no scalar studs. Maximally reusable (the opposite of sprawl).",
+      "schema": "str",
+      "produced_by_eg": ["organ-cache"], "consumed_by_eg": ["organ-cache"]
+    },
+    "Integer": {
+      "desc": "A primitive integer scalar (e.g. a TTL in seconds). Foundational scalar stud — see String.",
+      "schema": "int",
+      "produced_by_eg": ["organ-cache"], "consumed_by_eg": ["organ-cache"]
+    },
+    "Boolean": {
+      "desc": "A primitive boolean scalar (e.g. a present/absent or hit/miss flag). Foundational scalar stud — see String.",
+      "schema": "bool",
+      "produced_by_eg": ["organ-cache"], "consumed_by_eg": ["organ-cache"]
+    },
+    "Json": {
+      "desc": "An arbitrary JSON value of caller-defined shape (e.g. the components hashed into a cache key, or an opaque cached payload). The generic stud for organs that are polymorphic over the payload they handle.",
+      "schema": "any",
+      "produced_by_eg": ["organ-cache"], "consumed_by_eg": ["organ-cache"]
+    },
+    "CacheAction": {
+      "desc": "The action a cache spine should take for one operation: use a hit, compute on a miss, store a value, skip storing a None result, or bypass caching entirely. The cache organ's semantic output stud.",
+      "schema": {"enum": ["hit", "miss", "store", "skip_store", "bypass"]},
+      "produced_by_eg": ["organ-cache"], "consumed_by_eg": []
+    }
+  }
+}

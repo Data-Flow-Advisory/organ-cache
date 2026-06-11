@@ -1,0 +1,20 @@
+{
+  "_README": "Connection-standard port manifest (the Lego stud) for organ-cache. See CONNECTORS.md in Data-Flow-Advisory/orchestrator. `name` is the literal wiring address: the key decide() reads under `state` (inputs) or writes under `output` (outputs). `type` is a name from the shared vocabulary (vocab/types.json + vocab/proposed_types.json). NOTE: the organ's `context` keys (configured / redis_url / default_ttl / min_ttl / max_ttl) are configuration of the cache substrate, not wired ports, so they are intentionally not listed here.",
+  "inputs": [
+    {"name": "operation", "type": "String", "required": true},
+    {"name": "key_prefix", "type": "String", "required": false},
+    {"name": "key_parts", "type": "Json", "required": false},
+    {"name": "key", "type": "String", "required": false},
+    {"name": "ttl", "type": "Integer", "required": false},
+    {"name": "value_present", "type": "Boolean", "required": false},
+    {"name": "cached_value", "type": "Json", "required": false}
+  ],
+  "outputs": [
+    {"name": "caching_enabled", "type": "Boolean"},
+    {"name": "cache_key", "type": "String"},
+    {"name": "ttl", "type": "Integer"},
+    {"name": "action", "type": "CacheAction"},
+    {"name": "is_hit", "type": "Boolean"},
+    {"name": "should_store", "type": "Boolean"}
+  ]
+}

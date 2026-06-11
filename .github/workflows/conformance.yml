@@ -21,6 +21,9 @@ jobs:
       - name: Contract — decide() emits {output, rationale, self_metric.confidence} on every sample
         run: python3 check_contract.py
 
+      - name: Ports — connection-standard manifest (CONNECTORS.md stud check)
+        run: python3 check_ports.py
+
       - name: Tests
         run: |
           python -m pip install --quiet pytest
