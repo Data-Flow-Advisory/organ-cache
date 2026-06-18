@@ -1,0 +1,18 @@
+{
+  "state": {
+    "operation": "lookup",
+    "key_prefix": "solutions",
+    "key_parts": {
+      "tenant_id": 12,
+      "interview_id": 884
+    },
+    "cached_value": null
+  },
+  "context": {
+    "configured": true,
+    "redis_url": "redis://cache.internal:6379",
+    "default_ttl": 300,
+    "min_ttl": 1,
+    "max_ttl": 86400
+  }
+}

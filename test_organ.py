@@ -309,6 +309,70 @@ def test_samples_conform(sample):
     assert 0.0 <= data["self_metric"]["confidence"] <= 1.0
 
 
+# --------------------------------------------------------------------------- #
+# Sample VERDICT pinning — guards against a verdict flip slipping through CI.
+#
+# test_samples_conform above checks only the contract SHAPE (keys + confidence
+# range), so a regression that changed a sample's `action` from "hit" to "miss"
+# would stay green. These tests pin each sample's full decision and assert the
+# expectations set stays in lock-step with the files on disk, so adding or
+# renaming a sample without pinning its verdict fails loudly.
+# --------------------------------------------------------------------------- #
+
+# sample filename -> the exact decision it must produce.
+_SAMPLE_EXPECTATIONS = {
+    "backend_unconfigured_bypass.json": {
+        "action": "bypass", "is_hit": False, "should_store": False,
+        "cache_key": "blueprint:0ac20d2d6e96e74b", "ttl": 300, "confidence": 1.0,
+    },
+    "blueprint_cache_hit.json": {
+        "action": "hit", "is_hit": True, "should_store": False,
+        "cache_key": "blueprint:0ac20d2d6e96e74b", "ttl": 300, "confidence": 0.95,
+    },
+    "store_non_none_result.json": {
+        "action": "store", "is_hit": False, "should_store": True,
+        "cache_key": "solutions:2eda62b0e90789e1", "ttl": 600, "confidence": 0.95,
+    },
+    "read_miss_compute.json": {
+        "action": "miss", "is_hit": False, "should_store": False,
+        "cache_key": "solutions:2eda62b0e90789e1", "ttl": 300, "confidence": 0.95,
+    },
+    "skip_store_none_result.json": {
+        "action": "skip_store", "is_hit": False, "should_store": False,
+        "cache_key": "blueprint:0533e96fcc9b8396", "ttl": 300, "confidence": 0.95,
+    },
+}
+
+
+def test_sample_expectations_cover_disk():
+    """Every samples/*.json must have a pinned verdict, and vice-versa."""
+    on_disk = {p.name for p in (HERE / "samples").glob("*.json")}
+    pinned = set(_SAMPLE_EXPECTATIONS)
+    assert on_disk == pinned, (
+        f"sample/expectation drift — only on disk: {on_disk - pinned}; "
+        f"only pinned: {pinned - on_disk}"
+    )
+
+
+@pytest.mark.parametrize("name,expected", sorted(_SAMPLE_EXPECTATIONS.items()))
+def test_sample_verdicts_pinned(name, expected):
+    env = os.environ.copy()
+    env["ORGAN_INPUT"] = str(HERE / "samples" / name)
+    proc = subprocess.run(
+        [sys.executable, str(HERE / "organ.py")],
+        env=env, capture_output=True, text=True,
+    )
+    assert proc.returncode == 0, proc.stderr
+    data = json.loads(proc.stdout)
+    out = data["output"]
+    assert out["action"] == expected["action"], f"{name}: action flipped"
+    assert out["is_hit"] == expected["is_hit"], f"{name}: is_hit flipped"
+    assert out["should_store"] == expected["should_store"], f"{name}: should_store flipped"
+    assert out["cache_key"] == expected["cache_key"], f"{name}: cache_key drifted"
+    assert out["ttl"] == expected["ttl"], f"{name}: ttl drifted"
+    assert data["self_metric"]["confidence"] == expected["confidence"], f"{name}: confidence drifted"
+
+
 def test_cli_reads_stdin():
     proc = subprocess.run(
         [sys.executable, str(HERE / "organ.py")],
