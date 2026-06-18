@@ -1,0 +1,25 @@
+{
+  "_README": "Typed ports manifest for organ-cache (the Lego stud — see CONNECTORS.md). `inputs` names the keys decide() reads under `state`; `outputs` names the keys it writes under `output`. Each `type` is a name from the shared vocabulary in types.json. organ-cache is a low-level infrastructure organ: its ports are scalar primitives, so it maps onto the proposed primitive types (Str/Int/Bool/Json), not the discovery-spine domain types.",
+  "organ": "organ-cache",
+  "_checked": {
+    "corpus_checked": "2026-06-11",
+    "oss_checked": "2026-06-11"
+  },
+  "inputs": [
+    {"name": "operation", "type": "Str", "required": true},
+    {"name": "key_prefix", "type": "Str", "required": false},
+    {"name": "key_parts", "type": "Json", "required": false},
+    {"name": "key", "type": "Str", "required": false},
+    {"name": "ttl", "type": "Int", "required": false},
+    {"name": "value_present", "type": "Bool", "required": false},
+    {"name": "cached_value", "type": "Json", "required": false}
+  ],
+  "outputs": [
+    {"name": "caching_enabled", "type": "Bool"},
+    {"name": "cache_key", "type": "Str"},
+    {"name": "ttl", "type": "Int"},
+    {"name": "action", "type": "Str"},
+    {"name": "is_hit", "type": "Bool"},
+    {"name": "should_store", "type": "Bool"}
+  ]
+}
